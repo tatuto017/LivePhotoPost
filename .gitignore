@@ -32,3 +32,5 @@ docs/tasks/
 
 .omc
 .mcp.json
+.infisical.json
+template/*.txt

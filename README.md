@@ -33,6 +33,14 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 
 インストール後、シェルを再起動するか `source ~/.bashrc` を実行してパスを反映する。
 
+### Infisicalのインストール
+```
+curl -1sLf 'https://dl.cloudsmith.io/public/infisical/infisical-cli/setup.deb.sh' | sudo bash
+sudo apt-get install infisical
+infisical login
+infisical init
+```
+
 ### 依存パッケージのインストール
 
 **開発環境（Docker）**
@@ -68,12 +76,6 @@ PHOTO_DIR=/path/to/photos
 
 # Google カレンダーの iCal フィード URL（公開設定が必要）
 CALENDAR=https://calendar.google.com/calendar/ical/...
-
-# X (Twitter) API 認証情報
-X_API_KEY=
-X_API_SECRET=
-X_ACCESS_TOKEN=
-X_ACCESS_TOKEN_SECRET=
 ```
 
 ### 投稿テンプレートの配置
@@ -99,7 +101,7 @@ uv run python src/main.py
 | `src/venue_scraper.py` | チケット URL から会場名を取得 | 実装済み |
 | `src/photo_loader.py` | `PHOTO_DIR` のスキャン・EXIF 日時取得 | 実装済み |
 | `src/calendar_client.py` | iCal フェッチ・撮影日時に近いイベント検索 | 実装済み |
-| `src/x_poster.py` | Tweepy を使った X への投稿 | 未実装 |
+| `src/x_poster.py` | Tweepy を使った X への投稿 | 実装済み |
 | `src/main.py` | エントリーポイント・モジュール統合 | 未実装 |
 
 ## 対応チケットサイト

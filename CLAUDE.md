@@ -20,7 +20,7 @@ Xにライブの写真をポストする。
 | `src/venue_scraper.py` | チケットURLから会場名を取得 | 実装済み |
 | `src/photo_loader.py` | データディレクトリのスキャン・EXIF日時取得 | 実装済み |
 | `src/calendar_client.py` | iCalフェッチ・撮影日時に近いイベント検索 | 実装済み |
-| `src/x_poster.py` | Tweepy を使った X への投稿 | 未実装 |
+| `src/x_poster.py` | Tweepy を使った X への投稿 | 実装済み |
 | `src/main.py` | エントリーポイント・モジュール統合 | 未実装 |
 
 ### 環境変数
@@ -29,7 +29,7 @@ Xにライブの写真をポストする。
 | --- | --- |
 | `PHOTO_DIR` | 写真データディレクトリのパス（プロジェクト外も指定可） |
 | `CALENDAR` | Google Calendar の iCal フィード URL |
-| `X_API_KEY` 等 | X (Twitter) API 認証情報 |
+| `X_API_KEY` 等 | X (Twitter) API 認証情報、Infisicalを使用する |
 
 ### 対応チケットサイト
 
