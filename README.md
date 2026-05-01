@@ -97,8 +97,8 @@ uv run python src/main.py
 | ファイル | 役割 | 状態 |
 | --- | --- | --- |
 | `src/venue_scraper.py` | チケット URL から会場名を取得 | 実装済み |
-| `src/photo_loader.py` | `PHOTO_DIR` のスキャン・EXIF 日時取得 | 未実装 |
-| `src/calendar_client.py` | iCal フェッチ・撮影日時に近いイベント検索 | 未実装 |
+| `src/photo_loader.py` | `PHOTO_DIR` のスキャン・EXIF 日時取得 | 実装済み |
+| `src/calendar_client.py` | iCal フェッチ・撮影日時に近いイベント検索 | 実装済み |
 | `src/x_poster.py` | Tweepy を使った X への投稿 | 未実装 |
 | `src/main.py` | エントリーポイント・モジュール統合 | 未実装 |
 
