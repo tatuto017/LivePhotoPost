@@ -43,10 +43,10 @@ LivePhotoPost/
 | ファイル | 役割 | 状態 |
 | --- | --- | --- |
 | `venue_scraper.py` | チケットURLからドメイン別に会場名を取得 | 実装済み |
-| `photo_loader.py` | データディレクトリ（`$PHOTO_DIR`）のスキャン・EXIF日時取得 | 未実装 |
-| `calendar_client.py` | Google Calendar の iCal フェッチ・イベント検索 | 未実装 |
-| `x_poster.py` | Tweepy を使った X (Twitter) への投稿 | 未実装 |
-| `main.py` | エントリーポイント・各モジュールの統合 | 未実装 |
+| `photo_loader.py` | データディレクトリ（`$PHOTO_DIR`）のスキャン・EXIF日時取得 | 実装済み |
+| `calendar_client.py` | Google Calendar の iCal フェッチ・イベント検索 | 実装済み |
+| `x_poster.py` | Tweepy を使った X (Twitter) への投稿 | 実装済み |
+| `main.py` | エントリーポイント・各モジュールの統合 | 実装済み |
 
 ### 設定ファイル
 

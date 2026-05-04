@@ -21,7 +21,7 @@ Xにライブの写真をポストする。
 | `src/photo_loader.py` | データディレクトリのスキャン・EXIF日時取得 | 実装済み |
 | `src/calendar_client.py` | iCalフェッチ・撮影日時に近いイベント検索 | 実装済み |
 | `src/x_poster.py` | Tweepy を使った X への投稿 | 実装済み |
-| `src/main.py` | エントリーポイント・モジュール統合 | 未実装 |
+| `src/main.py` | エントリーポイント・モジュール統合 | 実装済み |
 
 ### 環境変数
 
