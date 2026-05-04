@@ -73,6 +73,9 @@ class CalendarClient:
 
         def timeDiff(event: Event):
             startAt = event.startAt
+            # 終日イベントは datetime.date で来るので midnight の datetime に変換する
+            if not isinstance(startAt, datetime):
+                startAt = datetime(startAt.year, startAt.month, startAt.day)
             # タイムゾーン情報を除去してnaiveなdatetimeで比較する
             if startAt.tzinfo is not None:
                 startAt = startAt.replace(tzinfo=None)
