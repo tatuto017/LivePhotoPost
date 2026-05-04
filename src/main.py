@@ -3,6 +3,8 @@
 import os
 from pathlib import Path
 
+from dotenv import load_dotenv
+
 from src.calendar_client import CalendarClient
 from src.photo_loader import PhotoLoader
 from src.venue_scraper import getVenue
@@ -69,6 +71,7 @@ def run(
 
 def main() -> None:
     """環境変数から設定を読み込んで run を実行する。"""
+    load_dotenv()
     photoDir = Path(os.environ["PHOTO_DIR"])
     calendarUrl = os.environ["CALENDAR"]
 
