@@ -68,7 +68,7 @@ uv sync
 
 ### 環境変数の設定
 
-`.env` ファイルをプロジェクトルートに作成する。
+`.env` ファイルをプロジェクトルートに作成する（`PHOTO_DIR` と `CALENDAR` のみ）。
 
 ```dotenv
 # 写真データのルートディレクトリ（プロジェクト外のパスも可）
@@ -77,6 +77,8 @@ PHOTO_DIR=/path/to/photos
 # Google カレンダーの iCal フィード URL（公開設定が必要）
 CALENDAR=https://calendar.google.com/calendar/ical/...
 ```
+
+X (Twitter) API 認証情報（`API_KEY`・`API_SECRET`・`ACCESS_TOKEN`・`ACCESS_TOKEN_SECRET`）は Infisical で管理する。`infisical init` 後、Infisical のプロジェクトにシークレットを登録すること。
 
 ### 投稿テンプレートの配置
 
@@ -90,8 +92,16 @@ template/
 
 ## 実行
 
+Infisical 経由でシークレットを注入して実行する。
+
 ```bash
-uv run python src/main.py
+./run.sh
+```
+
+内部では以下のコマンドを実行している。
+
+```bash
+infisical run -- python -m src.main
 ```
 
 ## モジュール構成
@@ -102,7 +112,7 @@ uv run python src/main.py
 | `src/photo_loader.py` | `PHOTO_DIR` のスキャン・EXIF 日時取得 | 実装済み |
 | `src/calendar_client.py` | iCal フェッチ・撮影日時に近いイベント検索 | 実装済み |
 | `src/x_poster.py` | Tweepy を使った X への投稿 | 実装済み |
-| `src/main.py` | エントリーポイント・モジュール統合 | 未実装 |
+| `src/main.py` | エントリーポイント・モジュール統合 | 実装済み |
 
 ## 対応チケットサイト
 
@@ -142,4 +152,4 @@ LivePhotoPost/
 | 画像・EXIF | Pillow |
 | HTTP クライアント | httpx |
 | カレンダー取得 | icalendar, python-dateutil |
-| 環境変数管理 | python-dotenv |
+| 環境変数管理 | python-dotenv / Infisical CLI |
