@@ -38,31 +38,43 @@ def run(
             continue
 
         actorId = actorDir.name
+        print(f"[{actorId}] 処理開始")
 
         templatePath = templateDir / f"{actorId}.txt"
         if not templatePath.exists():
+            print(f"[{actorId}] SKIP: テンプレートなし ({templatePath})")
             continue
         templateText = templatePath.read_text(encoding="utf-8")
 
         photos = photoLoader.loadPhotos(subDir=actorId)
         if not photos:
+            print(f"[{actorId}] SKIP: 写真なし")
             continue
 
         photo = photos[0]
         if photo.takenAt is None:
+            print(f"[{actorId}] SKIP: EXIF日時取得不可 ({photo.path})")
             continue
+
+        print(f"[{actorId}] 撮影日時: {photo.takenAt}")
 
         event = calendarClient.findNearestEvent(photo.takenAt, events)
         if event is None:
+            print(f"[{actorId}] SKIP: カレンダーイベントなし")
             continue
 
+        print(f"[{actorId}] イベント: {event.summary} ({event.startAt}) url={event.url}")
+
         if not event.url:
+            print(f"[{actorId}] SKIP: イベントにURL未設定")
             continue
 
         venue = getVenue(event.url)
         if not venue:
+            print(f"[{actorId}] SKIP: 会場名取得失敗 (url={event.url})")
             continue
 
+        print(f"[{actorId}] 会場: {venue}")
         xPoster.post(photo, event, venue, templateText)
         postedCount += 1
 

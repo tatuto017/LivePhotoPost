@@ -38,6 +38,18 @@ _ICS_NO_URL = (
     "END:VCALENDAR\r\n"
 ).encode("utf-8")
 
+_ICS_URL_IN_DESCRIPTION = (
+    "BEGIN:VCALENDAR\r\n"
+    "VERSION:2.0\r\n"
+    "BEGIN:VEVENT\r\n"
+    "SUMMARY:説明URLライブ\r\n"
+    "DTSTART:20260322T090000Z\r\n"
+    "DTEND:20260322T120000Z\r\n"
+    "DESCRIPTION:<a href=\"https://ticketdive.com/event/20260322_night\">https://ticketdive.com/event/20260322_night</a>\r\n"
+    "END:VEVENT\r\n"
+    "END:VCALENDAR\r\n"
+).encode("utf-8")
+
 
 class TestEvent:
     """Event データクラスのテスト。"""
@@ -96,11 +108,18 @@ class TestCalendarClientFetchEvents:
         assert "https://t.livepocket.jp/e/test-live" in urls
 
     def test_fetchEvents_event_without_url_sets_none(self):
-        """URL がない VEVENT は url=None になる。"""
+        """URL も DESCRIPTION も持たない VEVENT は url=None になる。"""
         client = self._makeClient(_ICS_NO_URL)
         events = client.fetchEvents()
         assert len(events) == 1
         assert events[0].url is None
+
+    def test_fetchEvents_extracts_url_from_description(self):
+        """URL プロパティがなく DESCRIPTION に URL がある場合、その URL を使う。"""
+        client = self._makeClient(_ICS_URL_IN_DESCRIPTION)
+        events = client.fetchEvents()
+        assert len(events) == 1
+        assert events[0].url == "https://ticketdive.com/event/20260322_night"
 
     def test_fetchEvents_parses_startAt(self):
         """DTSTART を startAt に格納する。"""
