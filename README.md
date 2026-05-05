@@ -101,7 +101,7 @@ Infisical 経由でシークレットを注入して実行する。
 内部では以下のコマンドを実行している。
 
 ```bash
-infisical run -- python -m src.main
+infisical run -- uv run python -m src.main
 ```
 
 ## モジュール構成
