@@ -1,11 +1,14 @@
 """iCalフィードの取得と撮影日時に近いイベント検索モジュール。"""
 
+import re
 from dataclasses import dataclass
 from datetime import datetime
 from typing import Optional
 
 import httpx
 from icalendar import Calendar
+
+_URL_PATTERN = re.compile(r'https?://[^\s<>"\'&]+')
 
 
 @dataclass
@@ -98,7 +101,13 @@ class CalendarClient:
             return None
 
         url_prop = component.get("URL")
-        url = str(url_prop) if url_prop else None
+        if url_prop:
+            url = str(url_prop)
+        else:
+            # URL プロパティがない場合は DESCRIPTION から抽出する
+            desc = str(component.get("DESCRIPTION", ""))
+            match = _URL_PATTERN.search(desc)
+            url = match.group(0) if match else None
 
         return Event(
             summary=str(summary),
