@@ -84,7 +84,11 @@ def _extractLivepocketNew(html: str) -> str | None:
 
 def _extractTiget(html: str) -> str | None:
     """tiget.net: meta description 内の 会場：会場名 パターンで抽出。"""
+    # name-first: <meta name="description" content="...">
     m = re.search(r'<meta[^>]+name=["\']description["\'][^>]+content=["\']([^"\']+)', html)
+    # content-first: <meta content="..." name="description">
+    if not m:
+        m = re.search(r'<meta[^>]+content=["\']([^"\']+)["\'][^>]*name=["\']description["\']', html)
     if m:
         v = re.search(r"会場[：:]\s*([^\s　,、。\n<]{1,60})", m.group(1))
         if v:
