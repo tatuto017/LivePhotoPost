@@ -64,7 +64,7 @@ getVenue(ticketUrl)
 
 ## 調査メモ（実装時の知見）
 
-- **tiget.net**: meta description タグに `会場：会場名` 形式で構造化されている
+- **tiget.net**: meta description タグに `会場：会場名` 形式で構造化されている。タグの属性順が `content-first`（`<meta content="..." name="description">`）のため、`name-first` と両パターンに対応している
 - **ticketdive.com**: `>会場</span>` の直後 span に会場名
 - **ticketvillage.jp**: `■ 会場` の後にスペース区切りで会場名
 - **livepocket.jp**: `event-detail-info__place` クラスを含む `<dt>` → 対応 `<dd>` に会場名
