@@ -50,6 +50,8 @@ class PhotoLoader:
         for filePath in sorted(scanDir.rglob("*")):
             if filePath.suffix.lower() not in _IMAGE_SUFFIXES:
                 continue
+            if "skip" in filePath.relative_to(scanDir).parts:
+                continue
             photo = self._loadPhoto(filePath)
             if photo is not None:
                 photos.append(photo)

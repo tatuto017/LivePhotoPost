@@ -51,32 +51,36 @@ def run(
             print(f"[{actorId}] SKIP: 写真なし")
             continue
 
-        photo = photos[0]
-        if photo.takenAt is None:
-            print(f"[{actorId}] SKIP: EXIF日時取得不可 ({photo.path})")
-            continue
+        for photo in photos:
+            if photo.takenAt is None:
+                print(f"[{actorId}] SKIP: EXIF日時取得不可 ({photo.path})")
+                continue
 
-        print(f"[{actorId}] 撮影日時: {photo.takenAt}")
+            print(f"[{actorId}] 撮影日時: {photo.takenAt}")
 
-        event = calendarClient.findNearestEvent(photo.takenAt, events)
-        if event is None:
-            print(f"[{actorId}] SKIP: カレンダーイベントなし")
-            continue
+            event = calendarClient.findNearestEvent(photo.takenAt, events)
+            if event is None:
+                print(f"[{actorId}] SKIP: カレンダーイベントなし")
+                continue
 
-        print(f"[{actorId}] イベント: {event.summary} ({event.startAt}) url={event.url}")
+            print(f"[{actorId}] イベント: {event.summary} ({event.startAt}) url={event.url}")
 
-        if not event.url:
-            print(f"[{actorId}] SKIP: イベントにURL未設定")
-            continue
+            if not event.url:
+                print(f"[{actorId}] SKIP: イベントにURL未設定")
+                continue
 
-        venue = getVenue(event.url)
-        if not venue:
-            print(f"[{actorId}] SKIP: 会場名取得失敗 (url={event.url})")
-            continue
+            venue = getVenue(event.url)
+            if not venue:
+                print(f"[{actorId}] SKIP: 会場名取得失敗 (url={event.url})")
+                skipDir = actorDir / "skip"
+                skipDir.mkdir(exist_ok=True)
+                photo.path.rename(skipDir / photo.path.name)
+                continue
 
-        print(f"[{actorId}] 会場: {venue}")
-        xPoster.post(photo, event, venue, templateText)
-        postedCount += 1
+            print(f"[{actorId}] 会場: {venue}")
+            xPoster.post(photo, event, venue, templateText)
+            postedCount += 1
+            break
 
     return postedCount
 

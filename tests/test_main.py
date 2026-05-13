@@ -124,14 +124,17 @@ class TestRun:
         xPoster.post.assert_not_called()
 
     def test_run_skips_when_venue_not_found(self, tmp_path):
-        """会場名が取得できない場合はスキップする。"""
+        """会場名が取得できない場合はスキップディレクトリに移動する。"""
         photoDir = tmp_path / "photo_dir"
-        (photoDir / "actor_a").mkdir(parents=True)
+        actorDir = photoDir / "actor_a"
+        actorDir.mkdir(parents=True)
+        photoFile = actorDir / "photo.jpg"
+        photoFile.touch()
         templateDir = tmp_path / "template"
         templateDir.mkdir()
         (templateDir / "actor_a.txt").write_text("{date}\n{event_name}\n{venue}")
 
-        photo = _makePhoto()
+        photo = _makePhoto(path=photoFile)
         event = _makeEvent()
         photoLoader = self._makePhotoLoader({"actor_a": [photo]})
         calendarClient = self._makeCalendarClient([event], event)
@@ -142,6 +145,8 @@ class TestRun:
 
         assert result == 0
         xPoster.post.assert_not_called()
+        assert not photoFile.exists()
+        assert (actorDir / "skip" / "photo.jpg").exists()
 
     def test_run_skips_actor_without_template(self, tmp_path):
         """テンプレートファイルがない被写体はスキップする。"""
@@ -249,3 +254,30 @@ class TestRun:
 
         assert result == 1
         xPoster.post.assert_called_once_with(photo1, event, "渋谷O-WEST", templateText)
+
+    def test_run_moves_venue_failure_to_skip_and_posts_next(self, tmp_path):
+        """会場名取得失敗の写真をスキップディレクトリに移動し、次の写真を投稿する。"""
+        photoDir = tmp_path / "photo_dir"
+        actorDir = photoDir / "actor_a"
+        actorDir.mkdir(parents=True)
+        photo1File = actorDir / "photo1.jpg"
+        photo1File.touch()
+        templateDir = tmp_path / "template"
+        templateDir.mkdir()
+        templateText = "{date}\n{event_name}\n{venue}"
+        (templateDir / "actor_a.txt").write_text(templateText)
+
+        photo1 = _makePhoto(path=photo1File, takenAt=datetime(2026, 3, 22, 18, 0))
+        photo2 = _makePhoto(path=Path("/tmp/photo2.jpg"), takenAt=datetime(2026, 3, 22, 19, 0))
+        event = _makeEvent()
+        photoLoader = self._makePhotoLoader({"actor_a": [photo1, photo2]})
+        calendarClient = self._makeCalendarClient([event], event)
+        xPoster = self._makeXPoster()
+
+        with patch("src.main.getVenue", side_effect=[None, "渋谷O-WEST"]):
+            result = run(photoLoader, calendarClient, xPoster, templateDir, photoDir)
+
+        assert result == 1
+        xPoster.post.assert_called_once_with(photo2, event, "渋谷O-WEST", templateText)
+        assert not photo1File.exists()
+        assert (actorDir / "skip" / "photo1.jpg").exists()

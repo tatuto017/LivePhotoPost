@@ -184,3 +184,21 @@ class TestPhotoLoader:
 
         assert len(photos) == 1
         assert photos[0].path.name == "good.jpg"
+
+    def test_loadPhotos_excludes_skip_directory(self, tmp_path):
+        """skip ディレクトリ内の写真は除外する。"""
+        skip_dir = tmp_path / "skip"
+        skip_dir.mkdir()
+        (skip_dir / "skipped.jpg").touch()
+        (tmp_path / "valid.jpg").touch()
+
+        with patch("src.photo_loader.Image") as mock_image_cls:
+            mock_img = MagicMock()
+            mock_img._getexif.return_value = None
+            mock_image_cls.open.return_value = mock_img
+
+            loader = PhotoLoader(photoDir=tmp_path)
+            photos = loader.loadPhotos()
+
+        assert len(photos) == 1
+        assert photos[0].path.name == "valid.jpg"
