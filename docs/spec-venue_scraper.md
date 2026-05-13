@@ -19,7 +19,7 @@
 | `paylove.org` | REST API | `/api/events/{id}` の `data.venue` フィールドを取得 |
 | `t.livepocket.jp` | HTML 正規表現 | `[会場]会場名` パターンで抽出 |
 | `livepocket.jp` | HTML 正規表現 | `event-detail-info__place` の `dd` テキストで抽出 |
-| `tiget.net` | HTML 正規表現 | `meta description` 内の `会場：会場名` パターンで抽出 |
+| `tiget.net` | HTML 正規表現 | `<dt>会場</dt><dd><a>` パターンで抽出（フォールバック: `meta description` 内の `会場：会場名`） |
 | `ticketdive.com` | HTML 正規表現 | 会場ラベル直後の `span` テキストで抽出 |
 | `ticketvillage.jp` | HTML 正規表現 | `■ 会場　会場名` パターンで抽出 |
 | その他 | 非対応 | `None` を返す |
