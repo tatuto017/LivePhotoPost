@@ -27,6 +27,12 @@ TIGET_NO_VENUE_HTML = """\
 </head><body></body></html>
 """
 
+TIGET_DETAIL_TABLE_HTML = """\
+<html><body>
+<dl class="pg-event__detail__section"><dt class="pg-event__detail__title">会場</dt><dd class="pg-event__detail__contents"><a target="_blank" href="https://maps.google.com/?cid=11911261503502514313">clubasia(東京都)<svg height="14.29" viewBox="0 0 10 14.29" width="10" xmlns="http://www.w3.org/2000/svg"><g><path d="M5,0A5,5,0,0,0,0,5c0,3.75,5,9.29,5,9.29S10,8.75,10,5A5,5,0,0,0,5,0ZM5,6A2,2,0,1,1,7,4,2,2,0,0,1,5,6Z" fill="#999"></path></g></svg></a></dd></dl>
+</body></html>
+"""
+
 LIVEPOCKET_OLD_HTML = """\
 <html><body>
 [会場]Zepp Shinjuku (TOKYO)
@@ -88,6 +94,12 @@ class TestExtractTiget:
         with patch("httpx.get", return_value=_mock_http_get(TIGET_NAME_FIRST_HTML)):
             result = getVenue("https://tiget.net/events/999")
         assert result == "ZEPP"
+
+    def test_detailTable(self):
+        """詳細テーブルの dt/dd/a パターンから会場名を抽出し、都道府県サフィックスを除去できる。"""
+        with patch("httpx.get", return_value=_mock_http_get(TIGET_DETAIL_TABLE_HTML)):
+            result = getVenue("https://tiget.net/events/454587")
+        assert result == "clubasia"
 
     def test_noVenueInDescription(self):
         """meta description に会場情報がない場合は None を返す。"""

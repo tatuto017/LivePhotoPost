@@ -83,7 +83,17 @@ def _extractLivepocketNew(html: str) -> str | None:
 
 
 def _extractTiget(html: str) -> str | None:
-    """tiget.net: meta description 内の 会場：会場名 パターンで抽出。"""
+    """tiget.net: 詳細テーブルの会場行、またはmeta descriptionから会場名を抽出する。"""
+    # 詳細テーブルの会場行: <dt>会場</dt><dd><a>会場名
+    m = re.search(
+        r'<dt[^>]*>\s*会場\s*</dt>\s*<dd[^>]*>\s*<a[^>]*>([^<]+)',
+        html,
+        re.DOTALL,
+    )
+    if m:
+        # tiget.net は "(東京都)" などの都道府県サフィックスを付与するため除去する
+        return re.sub(r"\([^)]+\)\s*$", "", m.group(1)).strip()
+    # フォールバック: meta description 内の 会場[：:]会場名 パターン
     # name-first: <meta name="description" content="...">
     m = re.search(r'<meta[^>]+name=["\']description["\'][^>]+content=["\']([^"\']+)', html)
     # content-first: <meta content="..." name="description">
