@@ -17,7 +17,7 @@ class Photo:
 
     Attributes:
         path: 写真ファイルのパス
-        takenAt: 撮影日時（EXIFのDateTimeOriginal）。取得できない場合はNone
+        takenAt: 撮影日時。EXIFのDateTimeOriginalを優先し、なければファイルの作成日時を使用する
     """
 
     path: Path
@@ -56,18 +56,20 @@ class PhotoLoader:
             if photo is not None:
                 photos.append(photo)
 
-        # takenAtがNoneのものは末尾に、それ以外は昇順
+        # 撮影日時の昇順。takenAtがNoneのものは末尾に配置
         photos.sort(key=lambda p: (p.takenAt is None, p.takenAt or datetime.min))
         return photos
 
     def _loadPhoto(self, filePath: Path) -> Photo | None:
         """1枚の写真ファイルを読み込む。
 
-        EXIFの読み込みに失敗した場合はNoneを返す。
+        画像のオープンに失敗した場合はNoneを返す。
         """
         try:
             img = Image.open(filePath)
             takenAt = self._readTakenAt(img)
+            if takenAt is None:
+                takenAt = datetime.fromtimestamp(filePath.stat().st_ctime)
             return Photo(path=filePath, takenAt=takenAt)
         except Exception:
             return None

@@ -98,9 +98,11 @@ class TestPhotoLoader:
         assert len(photos) == 1
         assert photos[0].path.suffix.lower() == ".jpg"
 
-    def test_loadPhotos_no_exif_returns_none_takenAt(self, tmp_path):
-        """EXIFがない場合、takenAtはNoneになる。"""
-        (tmp_path / "photo.jpg").touch()
+    def test_loadPhotos_no_exif_uses_file_ctime(self, tmp_path):
+        """EXIFがない場合、takenAtはファイルの作成日時（ctime）になる。"""
+        img_path = tmp_path / "photo.jpg"
+        img_path.touch()
+        expected = datetime.fromtimestamp(img_path.stat().st_ctime)
 
         with patch("src.photo_loader.Image") as mock_image_cls:
             mock_img = MagicMock()
@@ -111,11 +113,13 @@ class TestPhotoLoader:
             photos = loader.loadPhotos()
 
         assert len(photos) == 1
-        assert photos[0].takenAt is None
+        assert photos[0].takenAt == expected
 
-    def test_loadPhotos_no_datetimeoriginal_in_exif_returns_none(self, tmp_path):
-        """EXIFにDateTimeOriginalがない場合、takenAtはNoneになる。"""
-        (tmp_path / "photo.jpg").touch()
+    def test_loadPhotos_no_datetimeoriginal_in_exif_uses_file_ctime(self, tmp_path):
+        """EXIFにDateTimeOriginalがない場合、takenAtはファイルの作成日時になる。"""
+        img_path = tmp_path / "photo.jpg"
+        img_path.touch()
+        expected = datetime.fromtimestamp(img_path.stat().st_ctime)
 
         # DateTimeOriginal (36867) を含まないEXIF
         mock_exif = {271: "Canon", 272: "EOS R5"}
@@ -127,7 +131,7 @@ class TestPhotoLoader:
             loader = PhotoLoader(photoDir=tmp_path)
             photos = loader.loadPhotos()
 
-        assert photos[0].takenAt is None
+        assert photos[0].takenAt == expected
 
     def test_loadPhotos_empty_directory(self, tmp_path):
         """空のディレクトリでは空リストを返す。"""
